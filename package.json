@@ -1,0 +1,18 @@
+{
+  "name": "tsundere-discord-girlfriend-bot",
+  "version": "1.0.0",
+  "description": "A Discord tsundere AI companion powered by Groq and JSON memory.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "deploy-commands": "node deploy-commands.js"
+  },
+  "engines": { "node": ">=20.0.0" },
+  "dependencies": {
+    "discord.js": "^14.22.1",
+    "dotenv": "^16.4.7",
+    "groq-sdk": "^0.18.0",
+    "node-cron": "^4.2.1"
+  }
+}
