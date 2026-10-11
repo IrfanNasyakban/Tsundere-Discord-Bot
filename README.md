@@ -1,85 +1,283 @@
-# Tsundere AI Girlfriend Discord Bot
+# 💗 Deby — Tsundere AI Girlfriend Bot
 
-A Discord.js bot using Groq for chat, JSON-file memory, daily greeting DMs, and optional server greeting channels.
+An AI-powered Discord companion built with **JavaScript, Discord.js, and Groq**. Deby features a tsundere personality, conversational AI, persistent JSON-based memory, and scheduled daily greetings.
 
-## Requirements
+This personal project explores the integration of large language models into Discord bots, with a focus on conversational interaction, personalization, and lightweight data persistence.
 
-- Node.js 20 or newer (use a current LTS release).
-- A Discord application/bot and its token.
-- A Groq API key.
+## ✨ Features
 
-## 1. Create the Discord bot
+* **AI-Powered Conversations** — Generate contextual responses using the Groq API.
+* **Tsundere Personality** — A playful, slightly sarcastic, and secretly affectionate AI companion.
+* **Discord Integration** — Interact through direct messages, server mentions, and replies to the bot's messages.
+* **Persistent Memory** — Store personal facts and recent conversation history in a local JSON file.
+* **Memory Management** — Save, view, and clear personal memories using slash commands.
+* **Daily Greetings** — Schedule good morning and good night messages through direct messages or configured server channels.
+* **Slash Commands** — Manage memory, greetings, and bot functionality directly from Discord.
+* **Timezone Configuration** — Customize greeting schedules and timezone settings through environment variables.
+* **VPS Deployment** — Support for continuous execution on Ubuntu using PM2.
 
-1. Open https://discord.com/developers/applications and create an application.
-2. Open **Bot**, create/reset the bot token, and copy it privately.
-3. In **Bot > Privileged Gateway Intents**, enable **Message Content Intent**. This is required for the bot to read message text.
-4. Open **OAuth2 > URL Generator**. Select scopes `bot` and `applications.commands`.
-5. Grant at least `View Channels`, `Send Messages`, `Read Message History`, and `Use Slash Commands`. Open the generated URL and add it to your server.
-6. Copy the Application ID from **General Information** as `DISCORD_CLIENT_ID`.
-7. For testing, enable Developer Mode in Discord, right-click your test server and copy its ID for `DISCORD_GUILD_ID`.
+## 🛠️ Tech Stack
 
-## 2. Get a Groq API key
+| Technology              | Purpose                           |
+| ----------------------- | --------------------------------- |
+| JavaScript (ES Modules) | Application logic                 |
+| Node.js                 | Runtime environment               |
+| Discord.js              | Discord API integration           |
+| Groq API                | AI-powered conversations          |
+| JSON                    | Persistent memory storage         |
+| node-cron               | Scheduled daily greetings         |
+| dotenv                  | Environment variable management   |
+| PM2                     | Process management and deployment |
 
-Create an API key at https://console.groq.com/ and copy it. Never commit your API key or Discord token to GitHub.
+## 📋 Prerequisites
 
-## 3. Configure and install
+Before running the project, make sure you have:
+
+* [Node.js](https://nodejs.org/) 20 or newer
+* [npm](https://www.npmjs.com/)
+* A Discord application and bot token
+* A Groq API key
+* A Discord server where you have permission to add bots
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/deby-discord-bot.git
+cd deby-discord-bot
+```
+
+Replace `YOUR_USERNAME` and the repository name with your actual GitHub details.
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env` file using the provided example:
 
 ```bash
 cp .env.example .env
-nano .env
-npm install
+```
+
+On Windows PowerShell, use:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Configure the following variables in `.env`:
+
+```dotenv
+# Discord Configuration
+DISCORD_TOKEN=your_discord_bot_token
+DISCORD_CLIENT_ID=your_discord_application_id
+DISCORD_GUILD_ID=your_test_server_id
+
+# Groq API Configuration
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=your_available_groq_model
+
+# Greeting Configuration
+TIMEZONE=Asia/Jakarta
+MORNING_CRON=0 8 * * *
+NIGHT_CRON=0 22 * * *
+
+# Companion Configuration
+GIRLFRIEND_NAME=Deby
+```
+
+**Configuration notes:**
+
+* `DISCORD_TOKEN`: Authentication token for the Discord bot.
+* `DISCORD_CLIENT_ID`: Application ID from the Discord Developer Portal.
+* `DISCORD_GUILD_ID`: Optional server ID for testing slash commands. Leave empty for global command registration if supported by the deployment script.
+* `GROQ_API_KEY`: API key generated through the Groq Console.
+* `GROQ_MODEL`: A model identifier currently available to your Groq account.
+* `TIMEZONE`: Timezone used for scheduled greetings.
+* `MORNING_CRON`: Schedule for morning greetings.
+* `NIGHT_CRON`: Schedule for evening greetings.
+* `GIRLFRIEND_NAME`: Display name used for the AI companion.
+
+Never commit `.env` or expose API keys and bot tokens in your source code.
+
+### 4. Configure the Discord application
+
+1. Open the [Discord Developer Portal](https://discord.com/developers/applications).
+2. Create an application and configure its bot.
+3. Enable **Message Content Intent** under the bot's privileged gateway intents.
+4. Open **OAuth2 → URL Generator**.
+5. Select the `bot` and `applications.commands` scopes.
+6. Grant the permissions required for viewing channels, reading message history, and sending messages.
+7. Use the generated URL to invite the bot to your Discord server.
+
+Keep bot permissions limited to what the application actually needs.
+
+### 5. Register slash commands
+
+Run:
+
+```bash
 npm run deploy-commands
+```
+
+For development, using `DISCORD_GUILD_ID` registers commands to your test server, allowing faster updates. Global commands may take longer to propagate.
+
+### 6. Start the bot
+
+```bash
 npm start
 ```
 
-Fill in `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, `GROQ_API_KEY`, and (for instant test-server command updates) `DISCORD_GUILD_ID` in `.env`. Set `GROQ_MODEL` to a model currently available to your Groq account. Remove `DISCORD_GUILD_ID` when you want to register commands globally; global command propagation may take longer.
+Once connected successfully, Deby can respond to supported messages and slash commands.
 
-## 4. How to use it
+## 💬 Available Commands
 
-- **DM:** send Yuki a message; she replies to messages in DMs.
-- **Server:** mention the bot or reply directly to one of its messages. She does not read/respond to every server conversation.
-- `/remember fact: I like iced coffee` — save a fact for future conversations.
-- `/memory` — show saved facts.
-- `/forget` — clear your saved facts and recent chat history.
-- `/greetings-enable` and `/greetings-disable` — opt in/out of daily greeting DMs.
-- `/set-greeting-channel channel: #general` — server admin enables daily greetings in a channel.
-- `/clear-greeting-channel` — server admin disables channel greetings.
-- `/ping` — check the bot.
+| Command                   | Description                                                   |
+| ------------------------- | ------------------------------------------------------------- |
+| `/ping`                   | Check the bot's responsiveness.                               |
+| `/remember`               | Save a personal fact to persistent memory.                    |
+| `/memory`                 | View saved facts associated with your Discord account.        |
+| `/forget`                 | Clear your saved facts and recent conversation history.       |
+| `/greetings-enable`       | Subscribe to daily greeting DMs.                              |
+| `/greetings-disable`      | Unsubscribe from daily greeting DMs.                          |
+| `/set-greeting-channel`   | Configure a server channel for scheduled greetings.           |
+| `/clear-greeting-channel` | Disable scheduled greetings in the configured server channel. |
 
-Daily greetings use `TIMEZONE`, `MORNING_CRON`, and `NIGHT_CRON` from `.env`. Defaults are 08:00 and 22:00 in `Asia/Jakarta`. DM greetings require the user to allow DMs from the bot's server. Server greeting messages are posted once per configured server each scheduled run.
+### Conversational Interaction
 
-## 5. Keep it running on Ubuntu with PM2
+**Direct messages:** Send Deby a message to start a conversation.
+
+**Server channels:** Mention Deby or reply directly to one of her messages.
+
+The bot does not automatically respond to every conversation in a server.
+
+## 🧠 Memory System
+
+Deby uses a local JSON file to maintain persistent user-specific information.
+
+The memory system supports:
+
+* Explicitly saved personal facts.
+* Recent conversation history for contextual responses.
+* Separate memory records for individual Discord users.
+* Commands for viewing and clearing stored information.
+
+Memory is stored in:
+
+```text
+data/memory.json
+```
+
+The file persists between restarts, provided it is not deleted or overwritten.
+
+**Current limitation:** The starter implementation does not automatically extract and permanently save new facts from every conversation. Use `/remember` to save important information explicitly.
+
+## ⏰ Scheduled Greetings
+
+Deby supports scheduled good morning and good night messages.
+
+Default configuration:
+
+| Setting          | Default      |
+| ---------------- | ------------ |
+| Morning greeting | 08:00        |
+| Night greeting   | 22:00        |
+| Timezone         | Asia/Jakarta |
+
+The schedules can be customized through `MORNING_CRON`, `NIGHT_CRON`, and `TIMEZONE`.
+
+Users must enable greeting DMs, and Discord privacy settings may prevent direct messages. Alternatively, server administrators can configure a channel for scheduled greetings.
+
+The bot must remain online for scheduled jobs to execute.
+
+## 🌐 Deployment with PM2
+
+For an Ubuntu VPS, PM2 can keep the bot running in the background.
+
+### Install PM2
 
 ```bash
 sudo npm install -g pm2
-pm2 start index.js --name yuki-discord
+```
+
+### Start the application
+
+```bash
+pm2 start index.js --name deby-discord
 pm2 save
 pm2 startup
 ```
 
-Run the command printed by `pm2 startup`, then use:
+Run the additional command printed by `pm2 startup` to configure startup persistence.
+
+### Useful commands
 
 ```bash
 pm2 status
-pm2 logs yuki-discord
-pm2 restart yuki-discord
+pm2 logs deby-discord
+pm2 restart deby-discord
+pm2 stop deby-discord
 ```
 
-Run `npm run deploy-commands` again whenever you change slash-command definitions.
+Whenever slash-command definitions change, register them again:
 
-## Memory and privacy
+```bash
+npm run deploy-commands
+```
 
-- Persistent data is stored in `data/memory.json`. Back it up if you want to preserve memories; protect it because it contains Discord user IDs, saved facts, and recent chat messages.
-- `/forget` clears the invoking user's saved facts and recent history.
-- The included memory is per Discord user. In a server, the bot only responds when mentioned or replied to, but those messages are still sent to Groq to generate a reply.
-- Do not store highly sensitive personal information. Anyone with access to the VPS/files can read the JSON file. Back up the file before editing it manually.
-- This starter stores recent chat history but does not automatically infer and save new facts from every conversation; use `/remember` for deliberate, reliable long-term memories.
+## 🔒 Security and Privacy
 
-## Troubleshooting
+This project uses third-party services and local storage, so appropriate security practices are important.
 
-- **401 from Groq:** check `GROQ_API_KEY`.
-- **Model not found / no access:** set `GROQ_MODEL` to a model currently listed in your Groq console. Model availability changes over time.
-- **No response in server:** enable Message Content Intent in the Developer Portal, ensure the bot has channel permissions, and mention it or reply to it.
-- **Slash commands missing:** rerun `npm run deploy-commands`; check `DISCORD_CLIENT_ID` and `DISCORD_GUILD_ID`.
-- **Greeting DMs fail:** allow DMs from server members and verify the bot can DM the user.
-- **Invalid memory JSON:** stop the bot, back up `data/memory.json`, and repair it or restore a valid JSON file.
+* Keep Discord tokens and Groq API keys in environment variables.
+* Add `.env` to `.gitignore`.
+* Do not publish `data/memory.json` because it may contain Discord user IDs, personal facts, and conversation history.
+* Restrict access to the VPS and project files.
+* Back up memory data securely before making changes.
+* Avoid storing sensitive personal information.
+* Remember that messages sent to the AI provider are processed by that provider to generate responses.
+
+The `/forget` command clears the invoking user's saved facts and recent conversation history within the implemented memory system. It does not delete records held independently by external providers.
+
+## 🐛 Troubleshooting
+
+| Issue                            | Possible Solution                                                                                   |
+| -------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Groq API returns `401`           | Verify that `GROQ_API_KEY` is valid.                                                                |
+| Model not found or unavailable   | Configure `GROQ_MODEL` with a model accessible to your account.                                     |
+| Bot does not respond in a server | Check Message Content Intent, channel permissions, and whether the bot was mentioned or replied to. |
+| Slash commands are missing       | Rerun `npm run deploy-commands` and verify the application and server IDs.                          |
+| Greeting DMs fail                | Check the user's DM privacy settings and whether the bot can contact them.                          |
+| Memory file cannot be parsed     | Stop the bot, back up the file, and restore valid JSON.                                             |
+| Scheduled messages are not sent  | Verify the timezone, cron expressions, and that the bot is online.                                  |
+
+## 🗺️ Future Improvements
+
+Potential enhancements for future development include:
+
+* Automatic extraction of relevant facts from conversations.
+* Relationship levels and progressive personality changes.
+* Customizable companion personalities.
+* Voice interaction and text-to-speech integration.
+* A configurable user preference and greeting system.
+* Improved memory search and conversation summarization.
+* Additional automated tests and error monitoring.
+
+## 👨‍💻 About the Project
+
+Deby is a personal development project created to explore Discord bot development, AI integration, conversational design, and persistent data management.
+
+The project serves as a practical learning experience in building interactive applications with JavaScript and external APIs.
+
+## 📄 License
+
+Choose a license before distributing or accepting contributions. If you want this project to be open source, consider the [MIT License](https://choosealicense.com/licenses/mit/).
+
+---
+
+**Built with JavaScript, Discord.js, and Groq.** 💗
